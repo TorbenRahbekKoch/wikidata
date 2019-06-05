@@ -44,6 +44,7 @@ may be a challenge for some JSON readers.
     "aliases":      // object
     "claims":       // object
     "sitelinks":    // object
+    "lastrevid":    // number: An internal revision id from Wikidata
 }
 ````
 
@@ -64,12 +65,13 @@ The general structure for items looks like this. The order of properties is impo
     "aliases":      // object
     "claims":       // object
     "sitelinks":    // object
+    "lastrevid":    // number: An internal revision id from Wikidata
 }
 ````
 
 According to [Wikibase/DataModel/JSON](https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON)
-there should also be ``lastrevid`` and ``modified`` properties for an item (and they would be 
-immensely useful), but I have not seen them in any file.
+there should also be a ``modified`` property for an item (and they would be 
+immensely useful), but I have not seen them in any file. 
 
 ## About languages
 
@@ -77,6 +79,9 @@ Language identifiers are used all over the place and can be looked up on
 [Help:Wikimedia language codes/lists/all](https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all),
 but more importantly each of them is in itself a Wikidata item with the property P424 
 [Wikimedia language code (P424)](https://www.wikidata.org/wiki/Property:P424).
+
+For some reason, though, links to languages in labels, aliases, descriptions etc. are never done with the Qxxxx item
+identifier but always with the two letter language code.
 
 ## ``labels``
 
