@@ -280,3 +280,5 @@ _datatype_ (in the _mainsnak_) as seen by this table:
 This basically makes the _type_ property redundant. **NOTE:** Even though the value type is stated as e.g. *wikibase-entityid* the
 actual contents on *value* is determined by the *datatype* and can therefore vary in both members and types. See (upcoming) description of
 the content for individual value types below.
+
+[Monolingualtext](monolingualtext.md)
