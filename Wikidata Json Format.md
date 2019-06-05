@@ -238,14 +238,15 @@ There are several values applicable for the ``datatype`` property:
 |---|
 | commonsMedia | Commons media | [CommonsMedia (Q29934260)](https://www.wikidata.org/wiki/Q29934260)|
 | external-id | External identifier | [external identifier (Q21754218)](https://www.wikidata.org/wiki/Q21754218) |
-| | Form |
+| wikibase-form | Form | [form (Q54285143)](https://www.wikidata.org/wiki/Q54285143)
 | geo-shape | Geographic shape |  [GeoShape (Q42742911)](https://www.wikidata.org/wiki/Q42742911) |
 | globe-coordinate | Globe Coordinate ||
-| | Lexeme |
+| lexeme | Lexeme |
 | math | Mathematical expression | [Math (Q42742777)](https://www.wikidata.org/wiki/Q42742777) |
 | monolingualtext | Monolingual text |
+| musical-notation | String |
 | quantity | Quantity ||
-| | Sense |
+| sense | Sense |
 | string | String |
 | tabular-data | Tabular data |
 | time | Time |
@@ -264,12 +265,18 @@ _datatype_ (in the _mainsnak_) as seen by this table:
 |globe-coordinate|globecoordinate
 |math|string|
 |monolingualtext|monolingualtext
+|musical-notation|string|
 |quantity|quantity
 |string|string
 |tabular-data|string
 |time|time
 |url|string
+|wikibase-form|wikibase-entityid
 |wikibase-item|wikibase-entityid
 |wikibase-property|wikibase-entityid
+|wikibase-lexeme|wikibase-entityid
+|wikibase-sense|wikibase-entityid
 
-This basically makes the _type_ property redundant.
+This basically makes the _type_ property redundant. **NOTE:** Even though the value type is stated as e.g. *wikibase-entityid* the
+actual contents on *value* is determined by the *datatype* and can therefore vary in both members and types. See (upcoming) description of
+the content for individual value types below.
