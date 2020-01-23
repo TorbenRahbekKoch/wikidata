@@ -7,7 +7,6 @@ and on countless hours sifting through the data will lend it some weight.
 
 # Overview
 
-
 The full dump file is a JSON file - located on the [wikimedia website](https://dumps.wikimedia.org/wikidatawiki/entities/) - in various compression formats starting
 with the name *latest-all*.
 
@@ -70,7 +69,7 @@ The general structure for items looks like this. The order of properties is impo
 ````
 
 According to [Wikibase/DataModel/JSON](https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON)
-there should also be a ``modified`` property for an item (and they would be 
+there should also be a ``modified`` property for an item (which would be
 immensely useful), but I have not seen them in any file. 
 
 ## About languages
@@ -81,7 +80,7 @@ but more importantly each of them is in itself a Wikidata item with the property
 [Wikimedia language code (P424)](https://www.wikidata.org/wiki/Property:P424).
 
 For some reason, though, links to languages in labels, aliases, descriptions etc. are never done with the Qxxxx item
-identifier but always with the two letter language code.
+identifier but always with Wikimedia language code.
 
 ## ``labels``
 
