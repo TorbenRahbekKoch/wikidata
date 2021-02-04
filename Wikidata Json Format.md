@@ -228,22 +228,23 @@ The _type_ is redundant, see discussion below:
 
 ## datatype
 
-The datatype does, naturally, tell something about the format of the data represented. 
-Each datatype is also represented in Wikidata as an item with the relation 
+The datatype does, naturally, tell something about the format of the data represented.
+Each datatype is also represented in Wikidata as an item with the relation
 [instance of (P31)](https://www.wikidata.org/wiki/Property:P31) ->
 [Wikibase datatype (Q19798645)](https://www.wikidata.org/wiki/Q19798645).
 
 All datatypes are listed on [wikidata](https://www.wikidata.org/wiki/Special:ListDatatypes) along with 
-other useful information. 
+other useful information.
 
 There are several values applicable for the ``datatype`` property:
 
-| datatype | Friendly name | Wiki page |
-|---|
-| commonsMedia | Commons media | [CommonsMedia (Q29934260)](https://www.wikidata.org/wiki/Q29934260)|
+|          datatype |     Friendly name |   Wikidata page |  
+|---------------- |---------|--------|
+| commonsMedia | Commons media | [CommonsMedia (Q29934260)](https://www.wikidata.org/wiki/Q29934260) | 
 | external-id | External identifier | [external identifier (Q21754218)](https://www.wikidata.org/wiki/Q21754218) |
 | wikibase-form | Form | [form (Q54285143)](https://www.wikidata.org/wiki/Q54285143)
 | geo-shape | Geographic shape |  [GeoShape (Q42742911)](https://www.wikidata.org/wiki/Q42742911) |
+| StringCreateFor | 210.8 ns | 4.18 ns | 4.29 ns | 0.0918 |     - |     - |     288 B | a |
 | globe-coordinate | Globe Coordinate ||
 | lexeme | Lexeme |
 | math | Mathematical expression | [Math (Q42742777)](https://www.wikidata.org/wiki/Q42742777) |
@@ -255,7 +256,7 @@ There are several values applicable for the ``datatype`` property:
 | tabular-data | Tabular data |
 | time | Time |
 | url | URL |
-| wikibase-item | Item | 
+| wikibase-item | Item |
 | wikibase-property | Property |
 
 There is a consistent relation between the _type_ of the _datavalue_ and the
