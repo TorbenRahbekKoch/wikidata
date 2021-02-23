@@ -5,7 +5,7 @@ partly on [Wikibase/DataModel/JSON](https://www.mediawiki.org/wiki/Wikibase/Data
 (which is partly incorrect)
 and on countless hours sifting through the data will lend it some weight.
 
-# Overview
+## Overview
 
 The full dump file is a JSON file - located on the [wikimedia website](https://dumps.wikimedia.org/wikidatawiki/entities/) - in various compression formats starting
 with the name *latest-all*.
@@ -19,7 +19,7 @@ Each line is a JSON object making up either an item or a property as seen by the
 ``type`` property. From there on the formats differ, but only slightly. The basic 
 format of the file is like this:
 
-````
+```` json
 [
 { ... } // item or property },
 { ... } // item or property },
@@ -32,8 +32,7 @@ may be a challenge for some JSON readers.
 
 ## Properties
 
-
-````
+```` json
 {
     "type":         // string: values: "property"
     "datatype":     // string: values: see below
@@ -47,7 +46,6 @@ may be a challenge for some JSON readers.
 }
 ````
 
-
 ## Items
 
 An item is an actual object, thing or concept, e.g. like **Back to The Future**, which
@@ -55,10 +53,10 @@ is a movie or **London**, which is a city.
 
 The general structure for items looks like this. The order of properties is important:
 
-````
+```` json
 {
     "type":    // string: values: "item"
-    "id":      // string: values: integer starting with either Q   - e.g. "Q91540"
+    "id":      // string: values: integer starting with Q   - e.g. "Q91540"
     "labels":  // object
     "descriptions": // object
     "aliases":      // object
@@ -70,13 +68,13 @@ The general structure for items looks like this. The order of properties is impo
 
 According to [Wikibase/DataModel/JSON](https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON)
 there should also be a ``modified`` property for an item (which would be
-immensely useful), but I have not seen them in any file. 
+immensely useful), but I have not seen them in any file.
 
 ## About languages
 
-Language identifiers are used all over the place and can be looked up on 
+Language identifiers are used all over the place and can be looked up on
 [Help:Wikimedia language codes/lists/all](https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all),
-but more importantly each of them is in itself a Wikidata item with the property P424 
+but more importantly each of them is in itself a Wikidata item with the property P424
 [Wikimedia language code (P424)](https://www.wikidata.org/wiki/Property:P424).
 
 For some reason, though, links to languages in labels, aliases, descriptions etc. are never done with the Qxxxx item
@@ -86,7 +84,7 @@ identifier but always with Wikimedia language code.
 
 The ``labels`` section is an object with a property for each language for which a label exists:
 
-````
+```` json
 "labels": {
     "en-gb": {
         "language": "en-gb",
@@ -94,7 +92,7 @@ The ``labels`` section is an object with a property for each language for which 
     },...
 ````
 
-As it can be seen the ``language`` property is redundant. 
+As it can be seen the ``language`` property is redundant.
 
 A label is what the "thing" is mainly called in different languages.
 
@@ -104,7 +102,7 @@ Since JSON only allows one instance of each property (?) only one label can exis
 
 The ``descriptions`` section is an object with a property for each language for which a description exists:
 
-````
+```` json
 "descriptions": {
     "en-gb": {
         "language": "en-gb",
@@ -112,7 +110,7 @@ The ``descriptions`` section is an object with a property for each language for 
     },...
 ````
 
-As it can be seen the ``language`` property is redundant. 
+As it can be seen the ``language`` property is redundant.
 
 A description is a more
 thorough explanation than the label. There is not necessarily both a label and a 
@@ -126,7 +124,7 @@ The ``aliases`` section is an object with a property for each language for which
 ``labels`` and ``descriptions`` there can be more than one ``alias`` for each language, for which an array
 is needed:
 
-````
+```` json
 "aliases": {
   "sco": [
     {
@@ -148,30 +146,31 @@ An alias can be seen as alternative, secondary labels.
 ## claims
 
 Claims are used to tell _what_ an item actually is. The ``claims`` section is an object with a
-property for each claim. Each claim is an array of anonymous objects which make up actual 
-individual claims. 
+property for each claim. Each claim is an array of anonymous objects which make up actual,
+individual claims.
 
 Claims exist for both properties and items.
 
 Claims are rather complex and difficult to describe, but here goes, starting with the general
 layout of the claims object:
 
-````
+```` json
 "claims": {
     "P31": [ // The type of claim - here "instance of" - note the array start. 
-        {
+        {    // Note the anonymous object
             "mainsnak": {
                 "snaktype": string,  // values: "value", "somevalue", "novalue"
-                "property": str ing, // always same as enclosing property value, e.g. "P31"
-                "datavalue": object, // layout depending on the datatype of the property
+                "property": string, // always same as enclosing property value, e.g. "P31"
+                "hash": string, // optional - only for "qualifier-snaks"
+                "datavalue": string, object, // type and layout depending on the datatype of the property
                 "datatype": string,  // See discussion of data types
             },
             "type": string, // Always "statement", see below
-            "qualifiers": ?? // optional
-            "qualifiers-order": ?? // optional
-            "id": string // unique id for the claim
+            "qualifiers": array of object // optional
+            "qualifiers-order": array of string // optional
+            "id": string // unique (and long...) id for the claim
             "rank": string // "normal", "preferred", "deprecated",
-            "references": ?? // optional
+            "references": array of object // optional
         },
         {
         }
@@ -183,7 +182,7 @@ layout of the claims object:
 Each individual claim is a _statement_ about the item. The property describes what type of a claim
 we are talking about. Each claim furthermore has a ``datavalue`` which qualifies the claim.
 
-Note that each claim is actually a list of individual claims for that property. This is 
+Note that each claim is actually a list of individual claims for that property. This is
 useful e.g. for songs on an album where the property ``P658 (tracklist)`` is a
 list of claims, one for each track. Note that the order is *probably* not important. Usually
 a qualifier (in this case ``P1545 (series ordinal)``) is used for stating the order.
@@ -236,33 +235,33 @@ Each datatype is also represented in Wikidata as an item with the relation
 All datatypes are listed on [wikidata](https://www.wikidata.org/wiki/Special:ListDatatypes) along with 
 other useful information.
 
-There are several values applicable for the ``datatype`` property:
+There is a consistent relation between the _type_ of the _datavalue_ and the
+_datatype_ (in the _mainsnak_) as seen by this table:
 
-|          datatype |     Friendly name |   Wikidata page |  
-|---------------- |---------|--------|
-| commonsMedia | Commons media | [CommonsMedia (Q29934260)](https://www.wikidata.org/wiki/Q29934260) | 
-| external-id | External identifier | [external identifier (Q21754218)](https://www.wikidata.org/wiki/Q21754218) |
-| wikibase-form | Form | [form (Q54285143)](https://www.wikidata.org/wiki/Q54285143)
-| geo-shape | Geographic shape |  [GeoShape (Q42742911)](https://www.wikidata.org/wiki/Q42742911) |
-| StringCreateFor | 210.8 ns | 4.18 ns | 4.29 ns | 0.0918 |     - |     - |     288 B | a |
-| globe-coordinate | Globe Coordinate ||
-| lexeme | Lexeme |
-| math | Mathematical expression | [Math (Q42742777)](https://www.wikidata.org/wiki/Q42742777) |
-| monolingualtext | Monolingual text |
-| musical-notation | String |
-| quantity | Quantity ||
-| sense | Sense |
-| string | String |
-| tabular-data | Tabular data |
-| time | Time |
-| url | URL |
-| wikibase-item | Item |
-| wikibase-property | Property |
+| datatype | type of *datavalue* | Friendly name | Wikidata page |  
+|---------------- |---------|---------|--------|
+| commonsMedia | string | Commons media | [CommonsMedia (Q29934260)](https://www.wikidata.org/wiki/Q29934260) | 
+| external-id | string | External identifier | [external identifier (Q21754218)](https://www.wikidata.org/wiki/Q21754218) |
+| geo-shape | string | Geographic shape |  [GeoShape (Q42742911)](https://www.wikidata.org/wiki/Q42742911) |
+| globe-coordinate | globecoordinate | Globe Coordinate ||
+| lexeme | |  Lexeme |
+| math | string | Mathematical expression | [Math (Q42742777)](https://www.wikidata.org/wiki/Q42742777) |
+| monolingualtext | monolingualtext | Monolingual text |
+| musical-notation | string | String |
+| quantity | quantity | Quantity ||
+| sense | | Sense |
+| string | string  String |
+| tabular-data | string | Tabular data |
+| time | time | Time |
+| url | string | URL |
+| wikibase-form | wikibase-entityid | Form | [form (Q54285143)](https://www.wikidata.org/wiki/Q54285143)
+| wikibase-item |  wikibase-entityid | Item |
+| wikibase-property |  wikibase-entityid | Property |
 
 There is a consistent relation between the _type_ of the _datavalue_ and the
 _datatype_ (in the _mainsnak_) as seen by this table:
 
-| datatype | value type |
+| datatype | type of *datavalue*  |
 |---|---|
 |commonsMedia|string
 |external-id|string

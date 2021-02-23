@@ -10,6 +10,8 @@ This format suggestion tries both to remedy both the redundancy and the problems
 
 The basic premise of the file: One line per item is the same.
 
+
+
 ## Languages
 
 Some easy space saving wins come from the labels, descriptions and aliases.
@@ -142,3 +144,7 @@ The corresponding compressed versions:
 ````
 
 Goes from 94 to a meagre 40 characters per language. A substantial saving!
+
+
+## Claims
+
