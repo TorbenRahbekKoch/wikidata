@@ -11,6 +11,16 @@ This format suggestion tries both to remedy both the redundancy and the problems
 The basic premise of the file: One line per item is the same.
 
 
+## Entry types - Item or Property
+
+The first property in each an every entry is the 
+`type` property which states whether the entry
+represents an `item` or `property`.
+
+This is redunant since the `id` property always
+starts with `Q` for items and `P` for properties.
+
+So I suggest that the `type` property is dropped.
 
 ## Languages
 
@@ -89,7 +99,7 @@ The same can be done with descriptions:
 ]
 ````
 
-As with *labels* we could also use *Q7979* here. 
+As with *labels* we could also use *Q7979* here.
 
 The compressed versions:
 
@@ -106,6 +116,8 @@ Goes from a whopping 94 characters to a mere 65.
 ### ``aliases``
 
 Aliases are a bit different, since there can be more than one alias per language.
+
+Original version:
 
 ````json
 "aliases": {
@@ -145,6 +157,22 @@ The corresponding compressed versions:
 
 Goes from 94 to a meagre 40 characters per language. A substantial saving!
 
-
 ## Claims
 
+````json
+"claims": [
+  {    
+    "property": "P31",
+    "id": string, //unique and looong id for the claim
+    "mainsnak": {
+      "type": string, // "value", "somevalue", "novalue"
+      "datatype": string,
+      "value": object, // type and layout depending on datatype
+    },
+    "qualifiers": object[] // list of qualifier snaks, optional
+    "qorder": string[], // optional
+    "rank": string, // "normal", "preferred", "deprecated"
+    "refs": object[], optional
+  }
+]
+````

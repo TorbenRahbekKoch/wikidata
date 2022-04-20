@@ -1,7 +1,7 @@
 ﻿# Wikidata Full JSON dump documentation
 
 This documentation is not supposed to be the authoritative guide but being based 
-partly on [Wikibase/DataModel/JSON](https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON) 
+partly on [Wikibase/DataModel/JSON](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html) 
 (which is partly incorrect)
 and on countless hours sifting through the data will lend it some weight.
 
@@ -11,7 +11,7 @@ The full dump file is a JSON file - located on the [wikimedia website](https://d
 with the name *latest-all*.
 
 The file is a JSON array of all the items and properties
-which are conveniently placed with one element on a line making it considerably 
+which are conveniently placed with one item/property on one line making it considerably 
 easier to read the file one line/item/property at a time, which also is - due to the
 amount of data - very necessary.
 
@@ -41,7 +41,6 @@ may be a challenge for some JSON readers.
     "descriptions": // object
     "aliases":      // object
     "claims":       // object
-    "sitelinks":    // object
     "lastrevid":    // number: An internal revision id from Wikidata
 }
 ````
@@ -66,7 +65,7 @@ The general structure for items looks like this. The order of properties is impo
 }
 ````
 
-According to [Wikibase/DataModel/JSON](https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON)
+According to [Wikibase/DataModel/JSON](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html)
 there should also be a ``modified`` property for an item (which would be
 immensely useful), but I have not seen them in any file.
 
@@ -96,7 +95,8 @@ As it can be seen the ``language`` property is redundant.
 
 A label is what the "thing" is mainly called in different languages.
 
-Since JSON only allows one instance of each property (?) only one label can exist for each language.
+Since JSON only allows one instance of each property only one label can exist for each language. This also means that having the value inside an object
+is really not necessary.
 
 ## ``descriptions``
 
@@ -139,15 +139,14 @@ is needed:
 }
 ````
 
-As it can be seen the ``language`` property is redundant.
+As it can be seen the ``language`` property is very redundant.
 
 An alias can be seen as alternative, secondary labels.
 
-## claims
+## Claims
 
-Claims are used to tell _what_ an item actually is. The ``claims`` section is an object with a
-property for each claim. Each claim is an array of anonymous objects which make up actual,
-individual claims.
+Claims are used to tell *what* an item actually is. The ``claims`` section is an object with a
+property for each claim. Each claim is an array of anonymous objects which together make up actual, individual claims - or *statements*.
 
 Claims exist for both properties and items.
 
@@ -156,13 +155,13 @@ layout of the claims object:
 
 ```` json
 "claims": {
-    "P31": [ // The type of claim - here "instance of" - note the array start. 
-        {    // Note the anonymous object
+    "P31": [ // The type of claim - here "instance of" - note the array start [. 
+        {    // The statement - note the anonymous object
             "mainsnak": {
                 "snaktype": string,  // values: "value", "somevalue", "novalue"
                 "property": string, // always same as enclosing property value, e.g. "P31"
                 "hash": string, // optional - only for "qualifier-snaks"
-                "datavalue": string, object, // type and layout depending on the datatype of the property
+                "datavalue":    object, // type and layout depending on the datatype of the property
                 "datatype": string,  // See discussion of data types
             },
             "type": string, // Always "statement", see below
@@ -174,17 +173,69 @@ layout of the claims object:
         },
         {
         }
-    ],
-    "P349": [...]
+    ], // Array end
+    "P349": [...] // Another claim
 }
+
+    "qualifiers":{
+        "P7141":[{
+            "snaktype":"value",
+            "property":"P7141","hash":"6e8532d38c30dde9077dcc09ea752af75420e3a1",
+            "datavalue":{
+                "value":"92\u2013107","type":"string"
+            },
+            "datatype":"string"
+        }]
+    }
+
+    "references":[{
+        "hash":"fa278ebfc458360e5aed63d5058cca83c46134f1",
+        "snaks":{
+            "P143":[{
+                "snaktype":"value",
+                "property":"P143",
+                "datavalue":{
+                    "value":{
+                        "entity-type":"item",
+                        "numeric-id":328,
+                        "id":"Q328"
+                    },
+                    "type":"wikibase-entityid"
+                },
+                "datatype":"wikibase-item"
+            }]
+        }
+
+    "qualifiers-order":[
+        "P580","P582"
+    ]
+
+    "sitelinks":{
+        "commonswiki":{
+            "site":"commonswiki",
+            "title":"Club Deportivo Mirand\u00e9s",
+            "badges":[]
+        },
+        "enwiki":{
+            "site":"enwiki",
+            "title":"CD Mirand\u00e9s",
+            "badges":[]
+        }
+    }    
 ````
 
-Each individual claim is a _statement_ about the item. The property describes what type of a claim
+Each individual claim (the anonymous object)
+is a *statement* about the item - or rather about the property in the respect that it
+*states* something about the property. E.g. When the property is *"P31" instance of* the statement states that
+the item is an *instance of* whatever the
+*statement*'s datavalue contains, e.g. a City or a Movie.
+
+The property describes what type of a claim
 we are talking about. Each claim furthermore has a ``datavalue`` which qualifies the claim.
 
-Note that each claim is actually a list of individual claims for that property. This is
+Note that each claim is actually a list of individual statements for that property. This is
 useful e.g. for songs on an album where the property ``P658 (tracklist)`` is a
-list of claims, one for each track. Note that the order is *probably* not important. Usually
+list of claims, one for each track. Note that the order is *probably* not important. Probably
 a qualifier (in this case ``P1545 (series ordinal)``) is used for stating the order.
 
 ### snaktype
@@ -209,12 +260,14 @@ In this case the claim does have an actual value, available in the _"datavalue"_
 
 The _datavalue_ property is always an object with the following layout:
 
+```` json
 "datavalue": {
     "value": object or string
     "type": string
 }
+````
 
-The _type_ property is one of the following values:
+The *type* property is one of the following values:
 
 - globecoordinate
 - monolingualtext
@@ -223,11 +276,13 @@ The _type_ property is one of the following values:
 - time
 - wikibase-entityid
 
-The _type_ is redundant, see discussion below:
+The *type* is redundant, see discussion below:
 
 ## datatype
 
-The datatype does, naturally, tell something about the format of the data represented.
+The datatype does, naturally, tell something about the format of the data represented - unfortunately it is not very useful when sequentially parsing
+datavalue, since the *datatype* property comes *after* the *datavalue* property...
+
 Each datatype is also represented in Wikidata as an item with the relation
 [instance of (P31)](https://www.wikidata.org/wiki/Property:P31) ->
 [Wikibase datatype (Q19798645)](https://www.wikidata.org/wiki/Q19798645).
@@ -235,54 +290,39 @@ Each datatype is also represented in Wikidata as an item with the relation
 All datatypes are listed on [wikidata](https://www.wikidata.org/wiki/Special:ListDatatypes) along with 
 other useful information.
 
-There is a consistent relation between the _type_ of the _datavalue_ and the
-_datatype_ (in the _mainsnak_) as seen by this table:
+There is a consistent relation between the *type* of the *datavalue* and the
+*datatype* (in the *mainsnak*) as seen by this table:
 
-| datatype | type of *datavalue* | Friendly name | Wikidata page |  
-|---------------- |---------|---------|--------|
-| commonsMedia | string | Commons media | [CommonsMedia (Q29934260)](https://www.wikidata.org/wiki/Q29934260) | 
-| external-id | string | External identifier | [external identifier (Q21754218)](https://www.wikidata.org/wiki/Q21754218) |
-| geo-shape | string | Geographic shape |  [GeoShape (Q42742911)](https://www.wikidata.org/wiki/Q42742911) |
-| globe-coordinate | globecoordinate | Globe Coordinate ||
-| lexeme | |  Lexeme |
-| math | string | Mathematical expression | [Math (Q42742777)](https://www.wikidata.org/wiki/Q42742777) |
-| monolingualtext | monolingualtext | Monolingual text |
-| musical-notation | string | String |
-| quantity | quantity | Quantity ||
-| sense | | Sense |
-| string | string  String |
+
+| *datatype* (of snak) | *type* of *datavalue* | Friendly name
+|---------------- |---------|---------|
+| [commonsMedia](commonsMedia.md) | string | Commons media file
+| [external-id](external-id.md) | string | External identifier
+| [geo-shape](geo-shape.md) | string | Geographic shape
+| globe-coordinate | globecoordinate | Geographic coordinates |
+| math | string | Mathematical expression | [monolingualtext](monolingualtext.md) | monolingualtext | Monolingual text |
+| musical-notation | string | Musical notation |
+| [quantity](quantity.md) | quantity | Quantity ||
+| string | string | String |
 | tabular-data | string | Tabular data |
-| time | time | Time |
+| time | time | Point in time |
 | url | string | URL |
-| wikibase-form | wikibase-entityid | Form | [form (Q54285143)](https://www.wikidata.org/wiki/Q54285143)
-| wikibase-item |  wikibase-entityid | Item |
-| wikibase-property |  wikibase-entityid | Property |
+| [wikibase-form](wikibase-form.md) | wikibase-entityid | Form |
+| [wikibase-item](wikibase-item.md) |  wikibase-entityid | Item |
+| [wikibase-lexeme](wikibase-lexeme.md)|wikibase-entityid | Lexeme
+| [wikibase-property](wikibase-property.md) |  wikibase-entityid | Property |
+|wikibase-sense|wikibase-entityid|Sense
 
-There is a consistent relation between the _type_ of the _datavalue_ and the
-_datatype_ (in the _mainsnak_) as seen by this table:
+**Note about `wikibase-entityid`:** According to [Wikidata Documentation](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html) not all entries have `numeric-id`. The meaning of this is not clear
+and does sound rather strange to me, but what I think is meant
+by this is that there are different `wikibase-entityid` types and
+not all of those have a `numeric-id`.
 
-| datatype | type of *datavalue*  |
-|---|---|
-|commonsMedia|string
-|external-id|string
-|geo-shape|string
-|globe-coordinate|globecoordinate
-|math|string|
-|monolingualtext|monolingualtext
-|musical-notation|string|
-|quantity|quantity
-|string|string
-|tabular-data|string
-|time|time
-|url|string
-|wikibase-form|wikibase-entityid
-|wikibase-item|wikibase-entityid
-|wikibase-property|wikibase-entityid
-|wikibase-lexeme|wikibase-entityid
-|wikibase-sense|wikibase-entityid
+This basically makes the *type* property redundant. **NOTE:** Even though the type of  *datavalue* is stated as e.g. *wikibase-entityid* the
+actual contents of *value* is determined by the *datatype* and can therefore vary in both members and types. See (upcoming) description of
+the content for the individual *datatype*s of the snak  below.
 
-This basically makes the _type_ property redundant. **NOTE:** Even though the value type is stated as e.g. *wikibase-entityid* the
-actual contents on *value* is determined by the *datatype* and can therefore vary in both members and types. See (upcoming) description of
-the content for individual value types below.
-
-[Monolingualtext](Monolingualtext.md)
+- [External ID](ExternalId.md)
+- [Monolingual text](Monolingualtext.md)
+- [Wikibase Entity Id](WikibaseEntityId.md)
+  
