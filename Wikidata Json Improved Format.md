@@ -159,20 +159,23 @@ Goes from 94 to a meagre 40 characters per language. A substantial saving!
 
 ## Claims
 
+Claims can of course be simplified like crazy - here's
+a first draft idea:
+
 ````json
 "claims": [
   {    
     "property": "P31",
     "id": string, //unique and looong id for the claim
-    "mainsnak": {
-      "type": string, // "value", "somevalue", "novalue"
-      "datatype": string,
+    "snak": {
+      "type": number, // 0="value", 1="somevalue", 2="novalue"
+      "type": string, // "type" before "value"
       "value": object, // type and layout depending on datatype
     },
     "qualifiers": object[] // list of qualifier snaks, optional
     "qorder": string[], // optional
-    "rank": string, // "normal", "preferred", "deprecated"
-    "refs": object[], optional
+    "rank": number, // 0="normal", 1="preferred", 2="deprecated"
+    "refs": object[],// optional
   }
 ]
 ````

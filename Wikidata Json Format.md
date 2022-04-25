@@ -1,14 +1,16 @@
 ﻿# Wikidata Full JSON dump documentation
 
-This documentation is not supposed to be the authoritative guide but being based 
-partly on [Wikibase/DataModel/JSON](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html) 
-(which is partly incorrect)
+This documentation is not supposed to be the authoritative guide but being based
+partly on [Wikibase/DataModel/JSON](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html, which is partly incorrect and incomplete,
 and on countless hours sifting through the data will lend it some weight.
 
 ## Overview
 
 The full dump file is a JSON file - located on the [wikimedia website](https://dumps.wikimedia.org/wikidatawiki/entities/) - in various compression formats starting
 with the name *latest-all*.
+
+The format is a mess, lengthy and hard to read, probably stuff has been added on
+over the years, but that's how it it is right now - please see [Improved Format](Wikidata%20Json%20Improved%20Format.md) for some sugggestions on how to improve the format.
 
 The file is a JSON array of all the items and properties
 which are conveniently placed with one item/property on one line making it considerably 
@@ -177,17 +179,32 @@ layout of the claims object:
     "P349": [...] // Another claim
 }
 
+````
+
+Qualifiers:
+
+````json
     "qualifiers":{
         "P7141":[{
             "snaktype":"value",
-            "property":"P7141","hash":"6e8532d38c30dde9077dcc09ea752af75420e3a1",
+            "property":"P7141",
+            "hash":"6e8532d38c30dde9077dcc09ea752af75420e3a1",
             "datavalue":{
                 "value":"92\u2013107","type":"string"
             },
             "datatype":"string"
         }]
-    }
+    },
 
+    "qualifiers-order":[
+        "P1741"
+    ]
+
+````
+
+References:
+
+````json
     "references":[{
         "hash":"fa278ebfc458360e5aed63d5058cca83c46134f1",
         "snaks":{
@@ -206,10 +223,11 @@ layout of the claims object:
             }]
         }
 
-    "qualifiers-order":[
-        "P580","P582"
-    ]
+````
 
+Sitelinks:
+
+````json
     "sitelinks":{
         "commonswiki":{
             "site":"commonswiki",
@@ -293,36 +311,29 @@ other useful information.
 There is a consistent relation between the *type* of the *datavalue* and the
 *datatype* (in the *mainsnak*) as seen by this table:
 
-
 | *datatype* (of snak) | *type* of *datavalue* | Friendly name
 |---------------- |---------|---------|
 | [commonsMedia](commonsMedia.md) | string | Commons media file
 | [external-id](external-id.md) | string | External identifier
 | [geo-shape](geo-shape.md) | string | Geographic shape
-| globe-coordinate | globecoordinate | Geographic coordinates |
-| math | string | Mathematical expression | [monolingualtext](monolingualtext.md) | monolingualtext | Monolingual text |
-| musical-notation | string | Musical notation |
+| [globe-coordinate](globe-coordinate.md) | globecoordinate | Geographic coordinates |
+| [math](math.md) | string | Mathematical expression |
+| [monolingualtext](monolingualtext.md) | monolingualtext | Monolingual text |
+|  [musical-notation](musical-notation.md) | string | Musical notation |
 | [quantity](quantity.md) | quantity | Quantity ||
-| string | string | String |
-| tabular-data | string | Tabular data |
-| time | time | Point in time |
-| url | string | URL |
+| [string](string.md)| string | String |
+| [tabular-data](tabular-data.md) | string | Tabular data |
+| [time](time.md) | time | Point in time |
+| [url](url.md) | string | URL |
 | [wikibase-form](wikibase-form.md) | wikibase-entityid | Form |
 | [wikibase-item](wikibase-item.md) |  wikibase-entityid | Item |
 | [wikibase-lexeme](wikibase-lexeme.md)|wikibase-entityid | Lexeme
 | [wikibase-property](wikibase-property.md) |  wikibase-entityid | Property |
-|wikibase-sense|wikibase-entityid|Sense
+|[wikibase-sense](wikibase-sense.md)|wikibase-entityid|Sense
 
 **Note about `wikibase-entityid`:** According to [Wikidata Documentation](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html) not all entries have `numeric-id`. The meaning of this is not clear
 and does sound rather strange to me, but what I think is meant
 by this is that there are different `wikibase-entityid` types and
 not all of those have a `numeric-id`.
 
-This basically makes the *type* property redundant. **NOTE:** Even though the type of  *datavalue* is stated as e.g. *wikibase-entityid* the
-actual contents of *value* is determined by the *datatype* and can therefore vary in both members and types. See (upcoming) description of
-the content for the individual *datatype*s of the snak  below.
-
-- [External ID](ExternalId.md)
-- [Monolingual text](Monolingualtext.md)
-- [Wikibase Entity Id](WikibaseEntityId.md)
-  
+**Note:** The consistent relation between *type* and *datatype* basically makes the *type* property redundant.

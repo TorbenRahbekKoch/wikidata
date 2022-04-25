@@ -6,7 +6,7 @@
 |---|---|----|
 |quantity|quantity|<https://www.wikidata.org/wiki/Special:ListProperties/quantity>
 
-Layout: 
+Layout:
 
 ````json
     ...
