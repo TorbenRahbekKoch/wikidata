@@ -3,8 +3,7 @@
 ## Overview
 
 The [current format](Wikidata Json Format.md) has probably been patched and added to for several
-years. There is a lot of redundancy and reading it sequentially
-is quite hard.
+years. There is a lot of redundancy and reading it sequentially is quite hard.
 
 This format suggestion tries both to remedy both the redundancy and the problems with the file being hard to read sequentially.
 
@@ -163,19 +162,18 @@ Claims can of course be simplified like crazy - here's
 a first draft idea:
 
 ````json
-"claims": [
-  {    
-    "property": "P31",
+"claims": {
+  "P31": ]    
     "id": string, //unique and looong id for the claim
-    "snak": {
-      "type": number, // 0="value", 1="somevalue", 2="novalue"
-      "type": string, // "type" before "value"
-      "value": object, // type and layout depending on datatype
-    },
+    // No snak object
+    "snaktype": number, // 0="value", 1="somevalue", 2="novalue"
+    "type": string, // Note: "type" before "value"
+    "value": object, // type and layout depending on "type"
+    
     "qualifiers": object[] // list of qualifier snaks, optional
     "qorder": string[], // optional
-    "rank": number, // 0="normal", 1="preferred", 2="deprecated"
+    "rank": number, // 0="deprecated", 1="normal", 2="preferred"
     "refs": object[],// optional
-  }
-]
+  ]
+}
 ````

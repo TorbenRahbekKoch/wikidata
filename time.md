@@ -1,6 +1,6 @@
 # Wikidata Full JSON dump documentation
 
-## Time
+## Point in Time
 
 |datatype|type|Properties
 |---|---|----|
@@ -23,4 +23,4 @@ Layout:
     "datatype":"time"
 ````
 
-Please see the "time" section in [the official docs](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html) for details.
+Please see the "time" section in [the official docs](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html) for more details.

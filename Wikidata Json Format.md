@@ -1,7 +1,7 @@
 ﻿# Wikidata Full JSON dump documentation
 
 This documentation is not supposed to be the authoritative guide but being based
-partly on [Wikibase/DataModel/JSON](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html, which is partly incorrect and incomplete,
+partly on [Wikibase/DataModel/JSON](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html), which is partly incorrect and incomplete,
 and on countless hours sifting through the data will lend it some weight.
 
 ## Overview
@@ -14,8 +14,14 @@ over the years, but that's how it it is right now - please see [Improved Format]
 
 The file is a JSON array of all the items and properties
 which are conveniently placed with one item/property on one line making it considerably 
-easier to read the file one line/item/property at a time, which also is - due to the
+easier to read the file one line/item/property at a time, which also is - due to the excessive
 amount of data - very necessary.
+
+Around 1th of May 2022 the downloaded, compressed json-file (latest-all.json.bz2) is roughly 70GB and
+the decompressed file (latest-all.json) is
+1380987MB or just above 1.3TB. That the file is so
+compressible does say something about the inherent
+redundancy in the file.
 
 Each line is a JSON object making up either an item or a property as seen by the
 ``type`` property. From there on the formats differ, but only slightly. The basic 
@@ -118,7 +124,7 @@ A description is a more
 thorough explanation than the label. There is not necessarily both a label and a 
 description in the same language.
 
-Since JSON only allows one instance of each property (?) only one description can exist for each language.
+Since JSON only allows one instance of each property only one description can exist for each language.
 
 ## ``aliases``
 
