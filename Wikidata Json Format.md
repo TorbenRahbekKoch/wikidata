@@ -13,18 +13,15 @@ The format is a mess, lengthy and hard to read, probably stuff has been added on
 over the years, but that's how it it is right now - please see [Improved Format](Wikidata%20Json%20Improved%20Format.md) for some sugggestions on how to improve the format.
 
 The file is a JSON array of all the items and properties
-which are conveniently placed with one item/property on one line making it considerably 
-easier to read the file one line/item/property at a time, which also is - due to the excessive
-amount of data - very necessary.
+which are conveniently placed with one item/property on one line (with UNIX line endings) making it considerably easier to read the file one line/item/property at a time, which also is - due to the excessive amount of data - very necessary.
 
-Around 1th of May 2022 the downloaded, compressed json-file (latest-all.json.bz2) is roughly 70GB and
-the decompressed file (latest-all.json) is
-1380987MB or just above 1.3TB. That the file is so
+Around 1th of July 2022 the downloaded, compressed json-file (latest-all.json.bz2) is roughly 71GB and the decompressed file (latest-all.json) is
+14068MB or close to 1.4TB. That the file is so
 compressible does say something about the inherent
 redundancy in the file.
 
 Each line is a JSON object making up either an item or a property as seen by the
-``type`` property. From there on the formats differ, but only slightly. The basic 
+``type`` property. From there on the formats differ, but only slightly. The basic
 format of the file is like this:
 
 ```` json
@@ -35,10 +32,11 @@ format of the file is like this:
 ]
 ````
 
-Since the document is valid JSON there is a comma at the end of each line. This 
-may be a challenge for some JSON readers.
+Since the document is valid JSON there is a comma at the end of each line. This may be a challenge for some JSON readers.
 
 ## Properties
+
+A property is used to *state* something about an *Item*.
 
 ```` json
 {
@@ -49,7 +47,11 @@ may be a challenge for some JSON readers.
     "descriptions": // object
     "aliases":      // object
     "claims":       // object
+    "pageid":       // number: - internal something
+    "ns":           // number: - something else internal
+    "title":        // string: - something internal    
     "lastrevid":    // number: An internal revision id from Wikidata
+    "lastmodified": // datetime - last modified date of the item
 }
 ````
 
@@ -69,13 +71,18 @@ The general structure for items looks like this. The order of properties is impo
     "aliases":      // object
     "claims":       // object
     "sitelinks":    // object
+    "pageid":       // number: - internal something
+    "ns":           // number: - something else internal
+    "title":        // string: - something internal    
     "lastrevid":    // number: An internal revision id from Wikidata
+    "lastmodified": // datetime - last modified date of the item
 }
 ````
 
-According to [Wikibase/DataModel/JSON](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html)
-there should also be a ``modified`` property for an item (which would be
-immensely useful), but I have not seen them in any file.
+**NOTE:** According to [Wikibase/DataModel/JSON](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html)
+there is a ``modified`` property for an item (and property) which is now finally available from around 1. July 2022 (after years of waiting). Thanks! Unfortunately along
+with it came the properties ``pageid``, ``ns``, ``title`` which all are utterly useless
+but of course takes up valuable space, bandwidth and reading time.
 
 ## About languages
 
@@ -121,7 +128,7 @@ The ``descriptions`` section is an object with a property for each language for 
 As it can be seen the ``language`` property is redundant.
 
 A description is a more
-thorough explanation than the label. There is not necessarily both a label and a 
+thorough explanation than a label. There is not necessarily both a label and a
 description in the same language.
 
 Since JSON only allows one instance of each property only one description can exist for each language.
@@ -159,7 +166,12 @@ property for each claim. Each claim is an array of anonymous objects which toget
 Claims exist for both properties and items.
 
 Claims are rather complex and difficult to describe, but here goes, starting with the general
-layout of the claims object:
+layout of the claims object.
+
+Please note that the [official documentation](https://doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html) lists the properties in **incorrect order** which might
+surprise you when trying to read the JSON manually.
+
+The correct order is as follows:
 
 ```` json
 "claims": {
@@ -168,12 +180,11 @@ layout of the claims object:
             "mainsnak": {
                 "snaktype": string,  // values: "value", "somevalue", "novalue"
                 "property": string, // always same as enclosing property value, e.g. "P31"
-                "hash": string, // optional - only for "qualifier-snaks"
                 "datavalue":    object, // type and layout depending on the datatype of the property
-                "datatype": string,  // See discussion of data types
+                "datatype": string,  // See discussion of data types and values below
             },
             "type": string, // Always "statement", see below
-            "qualifiers": array of object // optional
+            "qualifiers": array of object // optional - see below
             "qualifiers-order": array of string // optional
             "id": string // unique (and long...) id for the claim
             "rank": string // "normal", "preferred", "deprecated",
@@ -187,14 +198,18 @@ layout of the claims object:
 
 ````
 
-Qualifiers:
+A qualifier *qualifies* a statement, it could be e.g. qualifying that the statement
+is only correct for a given time period.
+
+Qualifiers look somewhat like claims:
 
 ````json
-    "qualifiers":{
-        "P7141":[{
-            "snaktype":"value",
-            "property":"P7141",
-            "hash":"6e8532d38c30dde9077dcc09ea752af75420e3a1",
+    "qualifiers": {
+        "P7141":[ // The type of the qualifier - here "measure number" (musical notation)
+        {
+            "snaktype":"value", // Not sure, but I think only "value" is applicable here
+            "property":"P7141", // Always same as enclosing property
+            "hash":"6e8532d38c30dde9077dcc09ea752af75420e3a1", 
             "datavalue":{
                 "value":"92\u2013107","type":"string"
             },
@@ -257,9 +272,9 @@ the item is an *instance of* whatever the
 The property describes what type of a claim
 we are talking about. Each claim furthermore has a ``datavalue`` which qualifies the claim.
 
-Note that each claim is actually a list of individual statements for that property. This is
+Note that each claim is actually a array of individual statements for that property. This is
 useful e.g. for songs on an album where the property ``P658 (tracklist)`` is a
-list of claims, one for each track. Note that the order is *probably* not important. Probably
+array of claims, one for each track. Note that the order is *probably* not important. Probably
 a qualifier (in this case ``P1545 (series ordinal)``) is used for stating the order.
 
 ### snaktype
@@ -311,8 +326,7 @@ Each datatype is also represented in Wikidata as an item with the relation
 [instance of (P31)](https://www.wikidata.org/wiki/Property:P31) ->
 [Wikibase datatype (Q19798645)](https://www.wikidata.org/wiki/Q19798645).
 
-All datatypes are listed on [wikidata](https://www.wikidata.org/wiki/Special:ListDatatypes) along with 
-other useful information.
+All datatypes are listed on [wikidata](https://www.wikidata.org/wiki/Special:ListDatatypes) along with other useful information.
 
 There is a consistent relation between the *type* of the *datavalue* and the
 *datatype* (in the *mainsnak*) as seen by this table:
